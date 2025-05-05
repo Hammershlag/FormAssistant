@@ -3,8 +3,10 @@ package com.hammershlag.formassistantbackend.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hammershlag.formassistantbackend.dto.LLMResponse;
+import com.hammershlag.formassistantbackend.exceptions.exceptionTypes.LLMException;
 import com.hammershlag.formassistantbackend.models.FormData;
 import com.hammershlag.formassistantbackend.services.config.LLMFormConfig;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -38,6 +40,7 @@ public class GeminiLLMService implements LLMService {
         this.objectMapper = objectMapper;
     }
 
+    @SneakyThrows
     public <T extends FormData> LLMResponse<T> generateFormContent(
             T form,
             String userInput,
@@ -70,7 +73,6 @@ public class GeminiLLMService implements LLMService {
         return parseLLMResponse(response.getBody(), config.getFormClass());
     }
 
-
     private <T extends FormData> LLMResponse<T> parseLLMResponse(String json, Class<T> clazz) {
         try {
             JsonNode root = objectMapper.readTree(json);
@@ -86,7 +88,7 @@ public class GeminiLLMService implements LLMService {
             return new LLMResponse<>(message, updatedForm);
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse Gemini response", e);
+            throw new LLMException("Failed to parse Gemini response");
         }
     }
 }

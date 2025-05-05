@@ -1,6 +1,7 @@
 package com.hammershlag.formassistantbackend.exceptions;
 
 import com.hammershlag.formassistantbackend.exceptions.exceptionTypes.InvalidDataException;
+import com.hammershlag.formassistantbackend.exceptions.exceptionTypes.LLMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,17 @@ public class ControllerExceptionHelper {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ExceptionDetails> handleInvalidDataException(InvalidDataException e) {
         return ResponseEntity.status(400).body(new ExceptionDetails(HttpStatus.BAD_REQUEST, e.getMessage()));
+    }
+
+    /**
+     * Use when server cannot process llm response
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(InvalidDataException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ExceptionDetails> handleLLMException(LLMException e) {
+        return ResponseEntity.status(500).body(new ExceptionDetails(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
     }
 
 }
