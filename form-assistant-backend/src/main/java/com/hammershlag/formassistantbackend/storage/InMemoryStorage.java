@@ -55,7 +55,11 @@ public class InMemoryStorage implements FormStorage {
      */
     @Override
     public Optional<String> getForm(String id) {
-        return store.get(id).isEmpty() ? Optional.empty() : Optional.of(store.get(id));
+        String formData = store.get(id);
+        if (formData == null || formData.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(store.get(id));
     }
 
     /**
