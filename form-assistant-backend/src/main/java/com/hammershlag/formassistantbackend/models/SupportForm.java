@@ -1,5 +1,6 @@
 package com.hammershlag.formassistantbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class SupportForm implements FormData{
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
 
+    @JsonIgnore
     @Override
     public boolean isDataValid() {
         return firstName != null && firstName.length() <= MAX_NAME_LENGTH &&
@@ -61,7 +63,7 @@ public class SupportForm implements FormData{
         try {
             return new ObjectMapper().readValue(json, SupportForm.class);
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Invalid JSON for ContactForm", e);
+            throw new IllegalArgumentException("Invalid JSON for SupportForm", e);
         }
     }
 }
