@@ -1,6 +1,5 @@
 package com.hammershlag.formassistantbackend.controllers;
 
-import com.hammershlag.formassistantbackend.dto.FormUpdateRequest;
 import com.hammershlag.formassistantbackend.dto.LLMResponse;
 import com.hammershlag.formassistantbackend.models.SupportForm;
 import com.hammershlag.formassistantbackend.services.SupportFormLLMService;
