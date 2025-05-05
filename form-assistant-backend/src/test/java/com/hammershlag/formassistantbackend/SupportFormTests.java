@@ -1,5 +1,6 @@
 package com.hammershlag.formassistantbackend;
 
+import com.hammershlag.formassistantbackend.exceptions.exceptionTypes.InvalidDataException;
 import com.hammershlag.formassistantbackend.models.SupportForm;
 import org.junit.jupiter.api.Test;
 
@@ -22,39 +23,61 @@ public class SupportFormTests {
     void testInvalidFirstNameTooLong() {
         String longName = "A".repeat(25);
         SupportForm form = new SupportForm(longName, "Doe", "john.doe@example.com", "Help", (short) 5);
-        assertFalse(form.isDataValid(), "Form with long first name should be invalid");
+
+        // Expecting the InvalidDataException to be thrown due to long first name
+        InvalidDataException exception = assertThrows(InvalidDataException.class, form::isDataValid);
+
+        // Optionally, check the exception message to ensure it is as expected
+        assertEquals("First name is invalid: must be at most 20 characters.", exception.getMessage());
     }
+
 
     @Test
     void testInvalidLastNameNull() {
         SupportForm form = new SupportForm("John", null, "john.doe@example.com", "Help", (short) 5);
-        assertFalse(form.isDataValid(), "Form with null last name should be invalid");
+
+        // Expecting InvalidDataException to be thrown for null last name
+        InvalidDataException exception = assertThrows(InvalidDataException.class, form::isDataValid);
+        assertEquals("Last name is invalid: must  be at most 20 characters.", exception.getMessage());
     }
 
     @Test
     void testInvalidEmailFormat() {
         SupportForm form = new SupportForm("John", "Doe", "not-an-email", "Help", (short) 5);
-        assertFalse(form.isDataValid(), "Form with invalid email should be invalid");
+
+        // Expecting InvalidDataException to be thrown for invalid email format
+        InvalidDataException exception = assertThrows(InvalidDataException.class, form::isDataValid);
+        assertEquals("Email is invalid: must  match the email pattern.", exception.getMessage());
     }
 
     @Test
     void testInvalidReasonTooLong() {
         String longReason = "R".repeat(101);
         SupportForm form = new SupportForm("John", "Doe", "john.doe@example.com", longReason, (short) 5);
-        assertFalse(form.isDataValid(), "Form with long reason should be invalid");
+
+        // Expecting InvalidDataException to be thrown for reason that is too long
+        InvalidDataException exception = assertThrows(InvalidDataException.class, form::isDataValid);
+        assertEquals("Reason of contact is invalid: must  be at most 100 characters.", exception.getMessage());
     }
 
     @Test
     void testInvalidUrgencyTooLow() {
-        SupportForm form = new SupportForm("John", "Doe", "john.doe@example.com", "Help", (short) 0);
-        assertFalse(form.isDataValid(), "Form with urgency < 1 should be invalid");
+        SupportForm form = new SupportForm("John", "Doe", "john.doe@example.com", "Help", (short) -1);
+
+        // Expecting InvalidDataException to be thrown for urgency less than 1
+        InvalidDataException exception = assertThrows(InvalidDataException.class, form::isDataValid);
+        assertEquals("Urgency is invalid: must be between 1 and 10.", exception.getMessage());
     }
 
     @Test
     void testInvalidUrgencyTooHigh() {
         SupportForm form = new SupportForm("John", "Doe", "john.doe@example.com", "Help", (short) 11);
-        assertFalse(form.isDataValid(), "Form with urgency > 10 should be invalid");
+
+        // Expecting InvalidDataException to be thrown for urgency greater than 10
+        InvalidDataException exception = assertThrows(InvalidDataException.class, form::isDataValid);
+        assertEquals("Urgency is invalid: must be between 1 and 10.", exception.getMessage());
     }
+
 
     @Test
     void testToJsonAndFromJson() {
