@@ -3,6 +3,7 @@ package com.hammershlag.formassistantbackend.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hammershlag.formassistantbackend.exceptions.exceptionTypes.InvalidDataException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,11 +35,22 @@ public class SupportForm implements FormData{
     @JsonIgnore
     @Override
     public boolean isDataValid() {
-        return firstName != null && firstName.length() <= MAX_NAME_LENGTH &&
-                lastName != null && lastName.length() <= MAX_NAME_LENGTH &&
-                email != null && EMAIL_PATTERN.matcher(email).matches() &&
-                reasonOfContact != null && reasonOfContact.length() <= MAX_REASON_LENGTH &&
-                urgency >= 1 && urgency <= 10;
+        if (firstName == null || firstName.length() > MAX_NAME_LENGTH) {
+            throw new InvalidDataException("First name is invalid: must be at most " + MAX_NAME_LENGTH + " characters.");
+        }
+        if (lastName == null || lastName.length() > MAX_NAME_LENGTH) {
+            throw new InvalidDataException("Last name is invalid: must  be at most " + MAX_NAME_LENGTH + " characters.");
+        }
+        if (email == null || (!email.equals("null") && !email.equals("Unknown") && !EMAIL_PATTERN.matcher(email).matches())) {
+            throw new InvalidDataException("Email is invalid: must  match the email pattern.");
+        }
+        if (reasonOfContact == null || reasonOfContact.length() > MAX_REASON_LENGTH) {
+            throw new InvalidDataException("Reason of contact is invalid: must  be at most " + MAX_REASON_LENGTH + " characters.");
+        }
+        if (urgency == null || urgency < 0 || urgency > 10) {
+            throw new InvalidDataException("Urgency is invalid: must be between 1 and 10.");
+        }
+        return true;
     }
 
     public static boolean isStructureValid(String json) {

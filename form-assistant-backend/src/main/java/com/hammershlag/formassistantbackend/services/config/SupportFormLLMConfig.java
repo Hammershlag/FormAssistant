@@ -18,8 +18,8 @@ public class SupportFormLLMConfig implements LLMFormConfig<SupportForm> {
     @Override
     public String getSystemInstruction() {
         return "You are a form-filling assistant. Process user inputs to update the given form JSON. " +
-                "Ensure all fields meet the following constraints: Firstname and Lastname (strings, max 20 characters), " +
-                "Email (valid email format), Reason of contact (string, max 100 characters), Urgency (integer, 0–10, " +
+                "Ensure all fields meet the following constraints: Firstname and Lastname (strings), " +
+                "Email (strings), Reason of contact (strings), Urgency (integer, 0–10, " +
                 "where 0 means the user has not specified it yet). Always return the complete form with all fields, " +
                 "even if some values remain empty or unchanged. Respond with the updated form and a friendly message " +
                 "explaining what was updated.";
@@ -35,10 +35,10 @@ public class SupportFormLLMConfig implements LLMFormConfig<SupportForm> {
                                 "updated_form", Map.of(
                                         "type", "OBJECT",
                                         "properties", Map.of(
-                                                "firstName", Map.of("type", "STRING", "maxLength", 20),
-                                                "lastName", Map.of("type", "STRING", "maxLength", 20),
-                                                "email", Map.of("type", "STRING", "maxLength", 64),
-                                                "reasonOfContact", Map.of("type", "STRING", "maxLength", 100),
+                                                "firstName", Map.of("type", "STRING"),
+                                                "lastName", Map.of("type", "STRING"),
+                                                "email", Map.of("type", "STRING"),
+                                                "reasonOfContact", Map.of("type", "STRING"),
                                                 "urgency", Map.of("type", "INTEGER", "minimum", 0, "maximum", 10)
                                         ),
                                         "required", List.of("firstName", "lastName", "email", "reasonOfContact", "urgency")

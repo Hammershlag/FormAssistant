@@ -1,0 +1,32 @@
+package com.hammershlag.formassistantbackend.exceptions;
+
+import com.hammershlag.formassistantbackend.exceptions.exceptionTypes.InvalidDataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+/**
+ * @author Tomasz Zbroszczyk
+ * @version 1.0
+ * @since 05.05.2025
+ */
+@ControllerAdvice
+public class ControllerExceptionHelper {
+
+
+    /**
+     * Use when user submits invalid data
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(InvalidDataException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionDetails> handleInvalidDataException(InvalidDataException e) {
+        return ResponseEntity.status(400).body(new ExceptionDetails(HttpStatus.BAD_REQUEST, e.getMessage()));
+    }
+
+}

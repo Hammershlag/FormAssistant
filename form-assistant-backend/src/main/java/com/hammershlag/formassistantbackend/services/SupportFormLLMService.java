@@ -4,6 +4,7 @@ import com.hammershlag.formassistantbackend.dto.LLMResponse;
 import com.hammershlag.formassistantbackend.models.SupportForm;
 import com.hammershlag.formassistantbackend.services.config.LLMFormConfig;
 import com.hammershlag.formassistantbackend.storage.FormStorage;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,6 +29,7 @@ public class SupportFormLLMService {
         this.formStorage = formStorage;
     }
 
+    @SneakyThrows
     public LLMResponse<SupportForm> updateSupportForm(String formId, String userInput) {
 
         SupportForm form;
@@ -42,6 +44,7 @@ public class SupportFormLLMService {
 
 
         LLMResponse<SupportForm> response = llmService.generateFormContent(form, userInput, config);
+        response.getUpdatedForm().isDataValid();
         formStorage.updateForm(formId, response.getUpdatedForm().toJson());
         response.setFormId(formId);
 

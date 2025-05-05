@@ -4,6 +4,7 @@ import com.hammershlag.formassistantbackend.dto.FormUpdateRequest;
 import com.hammershlag.formassistantbackend.dto.LLMResponse;
 import com.hammershlag.formassistantbackend.models.SupportForm;
 import com.hammershlag.formassistantbackend.services.SupportFormLLMService;
+import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ public class SupportFormController {
         this.llmService = llmService;
     }
 
+    @SneakyThrows
     @PostMapping("/update")
     public LLMResponse<SupportForm> updateForm(@RequestBody FormUpdateRequest request) {
         return llmService.updateSupportForm(request.getFormId(), request.getUserInput());
