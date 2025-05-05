@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hammershlag.formassistantbackend.dto.LLMResponse;
 import com.hammershlag.formassistantbackend.models.FormData;
+import com.hammershlag.formassistantbackend.services.config.LLMFormConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -37,14 +38,15 @@ public class GeminiLLMService implements LLMService {
         this.objectMapper = objectMapper;
     }
 
-    @Override
-    public <T extends FormData> LLMResponse<T> generateFormContent(T form, String userInput, Class<T> clazz) {
+    public <T extends FormData> LLMResponse<T> generateFormContent(
+            T form,
+            String userInput,
+            LLMFormConfig<T> config
+    ) {
         String url = GEMINI_URL + apiKey;
 
         Map<String, Object> systemInstruction = Map.of(
-                "parts", List.of(Map.of(
-                        "text", "You are a form-filling assistant. Process user inputs to update the given form JSON. Ensure all fields meet the following constraints: Firstname and Lastname (strings, max 20 characters), Email (valid email format), Reason of contact (string, max 100 characters), Urgency (integer, 0–10, where 0 means the user has not specified it yet). Always return the complete form with all fields, even if some values remain empty or unchanged. Respond with the updated form and a friendly message explaining what was updated."
-                ))
+                "parts", List.of(Map.of("text", config.getSystemInstruction()))
         );
 
         Map<String, Object> contents = Map.of(
@@ -53,35 +55,10 @@ public class GeminiLLMService implements LLMService {
                 ))
         );
 
-        Map<String, Object> generationConfig = Map.of(
-                "response_mime_type", "application/json",
-                "response_schema", Map.of(
-                        "type", "OBJECT",
-                        "properties", Map.of(
-                                "updated_form", Map.of(
-                                        "type", "OBJECT",
-                                        "properties", Map.of(
-                                                "firstName", Map.of("type", "STRING", "maxLength", 20),
-                                                "lastName", Map.of("type", "STRING", "maxLength", 20),
-                                                "email", Map.of("type", "STRING", "maxLength", 64),
-                                                "reasonOfContact", Map.of("type", "STRING", "maxLength", 100),
-                                                "urgency", Map.of("type", "INTEGER", "minimum", 0, "maximum", 10)
-                                        ),
-                                        "required", List.of("firstName", "lastName", "email", "reasonOfContact", "urgency")
-                                ),
-                                "message", Map.of(
-                                        "type", "STRING",
-                                        "description", "A friendly message to the user explaining what was updated."
-                                )
-                        )
-                )
-        );
-
-
         Map<String, Object> body = Map.of(
                 "system_instruction", systemInstruction,
                 "contents", List.of(contents),
-                "generation_config", generationConfig
+                "generation_config", config.getGenerationConfig()
         );
 
         HttpHeaders headers = new HttpHeaders();
@@ -90,8 +67,9 @@ public class GeminiLLMService implements LLMService {
 
         ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 
-        return parseLLMResponse(response.getBody(), clazz);
+        return parseLLMResponse(response.getBody(), config.getFormClass());
     }
+
 
     private <T extends FormData> LLMResponse<T> parseLLMResponse(String json, Class<T> clazz) {
         try {

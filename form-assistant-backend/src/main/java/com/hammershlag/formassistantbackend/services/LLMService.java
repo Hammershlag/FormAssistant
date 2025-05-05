@@ -2,6 +2,7 @@ package com.hammershlag.formassistantbackend.services;
 
 import com.hammershlag.formassistantbackend.dto.LLMResponse;
 import com.hammershlag.formassistantbackend.models.FormData;
+import com.hammershlag.formassistantbackend.services.config.LLMFormConfig;
 
 /**
  * @author Tomasz Zbroszczyk
@@ -9,6 +10,8 @@ import com.hammershlag.formassistantbackend.models.FormData;
  * @since 05.05.2025
  */
 public interface LLMService {
-    <T extends FormData> LLMResponse<T> generateFormContent(T form, String userInput, Class<T> clazz);
+    <T extends FormData> LLMResponse<T> generateFormContent(T form,
+                                                            String userInput,
+                                                            LLMFormConfig<T> config);
 }
 

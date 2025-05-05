@@ -2,6 +2,7 @@ package com.hammershlag.formassistantbackend.services;
 
 import com.hammershlag.formassistantbackend.dto.LLMResponse;
 import com.hammershlag.formassistantbackend.models.SupportForm;
+import com.hammershlag.formassistantbackend.services.config.LLMFormConfig;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,15 +14,18 @@ import org.springframework.stereotype.Service;
 public class SupportFormLLMService {
 
     private final LLMService llmService;
+    private final LLMFormConfig<SupportForm> config;
 
-    public SupportFormLLMService(LLMService llmService) {
+    public SupportFormLLMService(LLMService llmService, LLMFormConfig<SupportForm> config) {
         this.llmService = llmService;
+        this.config = config;
     }
 
     public LLMResponse<SupportForm> updateSupportForm(SupportForm currentForm, String userInput) {
         if (currentForm == null) {
             currentForm = new SupportForm();
         }
-        return llmService.generateFormContent(currentForm, userInput, SupportForm.class);
+        return llmService.generateFormContent(currentForm, userInput, config);
     }
 }
+
