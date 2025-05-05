@@ -35,7 +35,7 @@ public class ControllerExceptionHelper {
      * @param e
      * @return
      */
-    @ExceptionHandler(InvalidDataException.class)
+    @ExceptionHandler(LLMException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ExceptionDetails> handleLLMException(LLMException e) {
         return ResponseEntity.status(500).body(new ExceptionDetails(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
