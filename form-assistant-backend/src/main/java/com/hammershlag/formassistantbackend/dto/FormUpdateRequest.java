@@ -16,6 +16,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class FormUpdateRequest {
 
-    private SupportForm form;
+    private String formId;
     private String userInput;
 }

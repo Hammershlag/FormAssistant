@@ -26,7 +26,7 @@ public class SupportFormController {
 
     @PostMapping("/update")
     public LLMResponse<SupportForm> updateForm(@RequestBody FormUpdateRequest request) {
-        return llmService.updateSupportForm(request.getForm(), request.getUserInput());
+        return llmService.updateSupportForm(request.getFormId(), request.getUserInput());
     }
 }
 
