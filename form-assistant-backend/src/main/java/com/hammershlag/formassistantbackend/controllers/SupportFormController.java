@@ -5,10 +5,8 @@ import com.hammershlag.formassistantbackend.dto.LLMResponse;
 import com.hammershlag.formassistantbackend.models.SupportForm;
 import com.hammershlag.formassistantbackend.services.SupportFormLLMService;
 import lombok.SneakyThrows;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Tomasz Zbroszczyk
@@ -25,10 +23,18 @@ public class SupportFormController {
         this.llmService = llmService;
     }
 
+    @GetMapping("/initial")
+    public ResponseEntity<SupportForm> getInitialForm() {
+        return ResponseEntity.ok(llmService.getInitialForm());
+    }
+
     @SneakyThrows
-    @PostMapping("/update")
-    public LLMResponse<SupportForm> updateForm(@RequestBody FormUpdateRequest request) {
-        return llmService.updateSupportForm(request.getFormId(), request.getUserInput());
+    @PutMapping({"/{formId}", ""})
+    public ResponseEntity<LLMResponse<SupportForm>> updateForm(@PathVariable(required = false) String formId, @RequestBody String userInput) {
+        if (formId == null)
+            formId = "";
+
+        return ResponseEntity.ok(llmService.updateSupportForm(formId, userInput));
     }
 }
 

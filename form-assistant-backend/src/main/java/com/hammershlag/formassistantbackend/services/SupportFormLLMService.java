@@ -51,6 +51,10 @@ public class SupportFormLLMService {
         return response;
     }
 
+    public SupportForm getInitialForm() {
+        return new SupportForm();
+    }
+
 }
 
 
