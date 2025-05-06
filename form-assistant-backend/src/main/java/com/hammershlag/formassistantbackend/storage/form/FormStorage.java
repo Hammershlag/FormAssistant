@@ -1,4 +1,4 @@
-package com.hammershlag.formassistantbackend.storage;
+package com.hammershlag.formassistantbackend.storage.form;
 
 import java.util.Optional;
 

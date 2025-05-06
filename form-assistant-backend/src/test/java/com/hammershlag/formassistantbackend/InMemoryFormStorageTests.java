@@ -1,6 +1,6 @@
 package com.hammershlag.formassistantbackend;
 
-import com.hammershlag.formassistantbackend.storage.InMemoryStorage;
+import com.hammershlag.formassistantbackend.storage.form.InMemoryFormStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,34 +15,34 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 05.05.2025
  */
 @SpringBootTest
-class InMemoryStorageTests {
+class InMemoryFormStorageTests {
 
-    private InMemoryStorage inMemoryStorage;
+    private InMemoryFormStorage inMemoryFormStorage;
 
     @BeforeEach
     void setUp() {
-        inMemoryStorage = new InMemoryStorage();
+        inMemoryFormStorage = new InMemoryFormStorage();
     }
 
     @Test
     void testSaveForm() {
         String json = "{\"name\":\"John Doe\", \"age\":30}";
 
-        String id = inMemoryStorage.saveForm(json);
+        String id = inMemoryFormStorage.saveForm(json);
 
         assertNotNull(id);
-        assertEquals(json, inMemoryStorage.getForm(id).orElse(null));
+        assertEquals(json, inMemoryFormStorage.getForm(id).orElse(null));
     }
 
     @Test
     void testUpdateForm() {
         String json = "{\"name\":\"Jane Doe\", \"age\":25}";
-        String id = inMemoryStorage.saveForm(json);
+        String id = inMemoryFormStorage.saveForm(json);
 
         String updatedJson = "{\"name\":\"Jane Smith\", \"age\":26}";
-        inMemoryStorage.updateForm(id, updatedJson);
+        inMemoryFormStorage.updateForm(id, updatedJson);
 
-        assertEquals(updatedJson, inMemoryStorage.getForm(id).orElse(null));
+        assertEquals(updatedJson, inMemoryFormStorage.getForm(id).orElse(null));
     }
 
     @Test
@@ -51,7 +51,7 @@ class InMemoryStorageTests {
         String json = "{\"name\":\"John Doe\", \"age\":30}";
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
-            inMemoryStorage.updateForm(invalidId, json);
+            inMemoryFormStorage.updateForm(invalidId, json);
         });
 
         assertEquals("Form with ID " + invalidId + " does not exist.", thrown.getMessage());
@@ -60,9 +60,9 @@ class InMemoryStorageTests {
     @Test
     void testGetForm() {
         String json = "{\"name\":\"Alice\", \"age\":28}";
-        String id = inMemoryStorage.saveForm(json);
+        String id = inMemoryFormStorage.saveForm(json);
 
-        Optional<String> retrievedForm = inMemoryStorage.getForm(id);
+        Optional<String> retrievedForm = inMemoryFormStorage.getForm(id);
 
         assertTrue(retrievedForm.isPresent());
         assertEquals(json, retrievedForm.get());
@@ -72,7 +72,7 @@ class InMemoryStorageTests {
     void testGetNonExistentForm() {
         String invalidId = "non-existent-id";
 
-        Optional<String> retrievedForm = inMemoryStorage.getForm(invalidId);
+        Optional<String> retrievedForm = inMemoryFormStorage.getForm(invalidId);
 
         assertFalse(retrievedForm.isPresent());
     }
@@ -80,18 +80,18 @@ class InMemoryStorageTests {
     @Test
     void testDeleteForm() {
         String json = "{\"name\":\"Bob\", \"age\":35}";
-        String id = inMemoryStorage.saveForm(json);
+        String id = inMemoryFormStorage.saveForm(json);
 
-        inMemoryStorage.deleteForm(id);
+        inMemoryFormStorage.deleteForm(id);
 
-        assertFalse(inMemoryStorage.getForm(id).isPresent());
+        assertFalse(inMemoryFormStorage.getForm(id).isPresent());
     }
 
     @Test
     void testDeleteNonExistentForm() {
         String invalidId = "invalid-id";
 
-        inMemoryStorage.deleteForm(invalidId);
+        inMemoryFormStorage.deleteForm(invalidId);
 
         assertTrue(true);
     }

@@ -4,22 +4,17 @@ import com.hammershlag.formassistantbackend.controllers.SupportFormController;
 import com.hammershlag.formassistantbackend.dto.LLMResponse;
 import com.hammershlag.formassistantbackend.exceptions.exceptionTypes.InvalidDataException;
 import com.hammershlag.formassistantbackend.models.SupportForm;
-import com.hammershlag.formassistantbackend.services.SupportFormLLMService;
+import com.hammershlag.formassistantbackend.services.form.SupportFormLLMService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * @author Tomasz Zbroszczyk
@@ -61,7 +56,7 @@ class SupportFormControllerTests {
         SupportForm updatedForm = new SupportForm("null", "null", "null", "null", (short) 0);
         LLMResponse<SupportForm> llmResponse = new LLMResponse<>("I could not identify any fields from your input.", updatedForm);
 
-        when(llmService.updateSupportForm(formId, userInput)).thenReturn(llmResponse);
+        when(llmService.updateForm(formId, userInput)).thenReturn(llmResponse);
 
         ResponseEntity<LLMResponse<SupportForm>> response = supportFormController.updateForm(formId, userInput);
         assertEquals(200, response.getStatusCodeValue());
@@ -75,7 +70,7 @@ class SupportFormControllerTests {
         SupportForm updatedForm = new SupportForm("Jane", "Doe", "jane.doe@example.com", "Assistance", (short) 3);
         LLMResponse<SupportForm> llmResponse = new LLMResponse<>("First name updated", updatedForm);
 
-        when(llmService.updateSupportForm("", userInput)).thenReturn(llmResponse);
+        when(llmService.updateForm("", userInput)).thenReturn(llmResponse);
 
         ResponseEntity<LLMResponse<SupportForm>> response = supportFormController.updateForm(null, userInput);
         assertEquals(200, response.getStatusCodeValue());
@@ -88,7 +83,7 @@ class SupportFormControllerTests {
         String formId = "12345";
         String userInput = "My name is " + "J".repeat(25);
 
-        when(llmService.updateSupportForm(formId, userInput))
+        when(llmService.updateForm(formId, userInput))
                 .thenThrow(new InvalidDataException("First name is invalid: must be at most 20 characters."));
 
         InvalidDataException ex = assertThrows(
@@ -104,7 +99,7 @@ class SupportFormControllerTests {
         String formId = "12345";
         String userInput = "My email is notAnEmail.com";
 
-        when(llmService.updateSupportForm(formId, userInput))
+        when(llmService.updateForm(formId, userInput))
                 .thenThrow(new InvalidDataException("Email is invalid: must match the email pattern."));
 
         InvalidDataException ex = assertThrows(
@@ -120,7 +115,7 @@ class SupportFormControllerTests {
         String formId = "12345";
         String userInput = "The reason why i contact you is " + "R".repeat(111);
 
-        when(llmService.updateSupportForm(formId, userInput))
+        when(llmService.updateForm(formId, userInput))
                 .thenThrow(new InvalidDataException("Reason of contact is invalid: must be at most 100 characters."));
 
         InvalidDataException ex = assertThrows(
@@ -136,7 +131,7 @@ class SupportFormControllerTests {
         String formId = "12345";
         String userInput = "My urgency is 15";
 
-        when(llmService.updateSupportForm(formId, userInput))
+        when(llmService.updateForm(formId, userInput))
                 .thenThrow(new InvalidDataException("Urgency is invalid: must be between 1 and 10."));
 
         InvalidDataException ex = assertThrows(
