@@ -2,7 +2,7 @@ package com.hammershlag.formassistantbackend.controllers;
 
 import com.hammershlag.formassistantbackend.dto.LLMResponse;
 import com.hammershlag.formassistantbackend.models.SupportForm;
-import com.hammershlag.formassistantbackend.services.SupportFormLLMService;
+import com.hammershlag.formassistantbackend.services.form.SupportFormLLMService;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +33,7 @@ public class SupportFormController {
         if (formId == null)
             formId = "";
 
-        return ResponseEntity.ok(llmService.updateSupportForm(formId, userInput));
+        return ResponseEntity.ok(llmService.updateForm(formId, userInput));
     }
 }
 

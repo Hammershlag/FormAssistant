@@ -1,4 +1,4 @@
-package com.hammershlag.formassistantbackend.storage;
+package com.hammershlag.formassistantbackend.storage.form;
 
 import org.springframework.stereotype.Component;
 
@@ -8,14 +8,15 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * In-memory storage implementation for storing form data.
+ *
  * @author Tomasz Zbroszczyk
  * @version 1.0
  * @since 05.05.2025
- * In-memory storage implementation for storing form data.
  */
 
 @Component
-public class InMemoryStorage implements FormStorage {
+public class InMemoryFormStorage implements FormStorage {
 
     private final Map<String, String> store = new ConcurrentHashMap<>();
 
@@ -71,4 +72,6 @@ public class InMemoryStorage implements FormStorage {
     public void deleteForm(String id) {
         store.remove(id);
     }
+
+
 }
