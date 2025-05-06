@@ -6,6 +6,7 @@ import com.hammershlag.formassistantbackend.dto.LLMResponse;
 import com.hammershlag.formassistantbackend.exceptions.exceptionTypes.LLMException;
 import com.hammershlag.formassistantbackend.models.FormData;
 import com.hammershlag.formassistantbackend.services.config.LLMFormConfig;
+import com.hammershlag.formassistantbackend.storage.message.Message;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -58,7 +59,7 @@ public class GeminiLLMService implements LLMService {
     @SneakyThrows
     public <T extends FormData> LLMResponse<T> generateFormContent(
             T form,
-            List<String> previousMessages,
+            List<Message> previousMessages,
             String userInput,
             LLMFormConfig<T> config
     ) {
@@ -71,12 +72,15 @@ public class GeminiLLMService implements LLMService {
         List<Map<String, Object>> contents = new ArrayList<>();
 
         for (int i = 0; i < previousMessages.size(); i++) {
-            String msg = previousMessages.get(i);
+            Message msg = previousMessages.get(i);
+
+
             contents.add(Map.of(
-                    "role", "user",
-                    "parts", List.of(Map.of("text", "Message " + i +": " + msg))
+                    "role", msg.getSender(),
+                    "parts", List.of(Map.of("text", "Message " + i + ": " + msg.getMessage()))
             ));
         }
+
 
         String currentMessage = "Here is the current form: " + form.toJson() +
                 ". My input: '" + userInput + "'";

@@ -9,8 +9,8 @@ import java.util.List;
  */
 public interface MessageHistoryStorage {
 
-    String saveMessage(String conversationId, String message);
-    List<String> getMessages(String conversationId);
+    String saveMessage(String conversationId, MessageSender sender,String message);
+    List<Message> getMessages(String conversationId);
     void deleteMessages(String conversationId);
     void deleteAllMessages();
 

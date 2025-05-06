@@ -3,6 +3,7 @@ package com.hammershlag.formassistantbackend.services.provider;
 import com.hammershlag.formassistantbackend.dto.LLMResponse;
 import com.hammershlag.formassistantbackend.models.FormData;
 import com.hammershlag.formassistantbackend.services.config.LLMFormConfig;
+import com.hammershlag.formassistantbackend.storage.message.Message;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public interface LLMService {
      * @return the generated LLM response containing the updated form and a message
      */
     <T extends FormData> LLMResponse<T> generateFormContent(T form,
-                                                            List<String> previousMessages,
+                                                            List<Message> previousMessages,
                                                             String userInput,
                                                             LLMFormConfig<T> config);
 }
