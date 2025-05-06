@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ChatWindow from "../ChatWindow/ChatWindow";
 import MessageInput from "../MessageInput/MessageInput";
 import FormDisplay from "../FormDisplay/FormDisplay";
+import "./FormAssistant.css";
 
 const SupportFormAssistant = () => {
     const [messages, setMessages] = useState([
