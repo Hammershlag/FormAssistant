@@ -1,0 +1,18 @@
+version: '3.8'
+
+name: Form-Assistant
+
+services:
+  backend:
+    build: ./form-assistant-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+
+  frontend:
+    build: ./form-assistant-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
