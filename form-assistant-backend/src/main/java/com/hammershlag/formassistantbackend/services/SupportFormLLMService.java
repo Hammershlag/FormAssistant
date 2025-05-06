@@ -45,6 +45,7 @@ public class SupportFormLLMService {
 
         LLMResponse<SupportForm> response = llmService.generateFormContent(form, userInput, config);
         response.getUpdatedForm().isDataValid();
+        response.getUpdatedForm().normalizeData();
         formStorage.updateForm(formId, response.getUpdatedForm().toJson());
         response.setFormId(formId);
 
