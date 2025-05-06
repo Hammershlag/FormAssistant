@@ -65,7 +65,6 @@ public class SupportFormLLMService implements FormLLMService<SupportForm> {
         }
 
         List<Message> previousMessages = messageHistoryStorage.getMessages(formId);
-        System.out.println("Previous messages: " + previousMessages);
         messageHistoryStorage.saveMessage(formId, MessageSender.USER, userInput);
 
         try {
