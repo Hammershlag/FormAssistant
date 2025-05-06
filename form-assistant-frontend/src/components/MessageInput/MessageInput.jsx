@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./MessageInput.css";
 
 const MessageInput = ({ onSend }) => {
     const [message, setMessage] = useState("");
@@ -19,15 +20,17 @@ const MessageInput = ({ onSend }) => {
     };
 
     return (
-        <div>
+        <div className="message-input-container">
             <textarea
-              rows={1}
-              placeholder="Type your message..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
+                className="message-input-textarea"
+                rows={1}
+                placeholder="Type your message..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
             />
             <button
+                className="message-input-button"
                 onClick={handleSend}
             >
                 Send
