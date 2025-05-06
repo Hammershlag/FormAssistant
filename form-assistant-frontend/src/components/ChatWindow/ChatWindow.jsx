@@ -1,7 +1,15 @@
-import React from "react";
-import "./ChatWindow.css"
+import React, { useEffect, useRef } from "react";
+import "./ChatWindow.css";
 
 const ChatWindow = ({ messages }) => {
+    const endOfMessagesRef = useRef(null);
+
+    useEffect(() => {
+        if (endOfMessagesRef.current) {
+            endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages]);
+
     return (
         <div className="chat-window">
             {messages.map((msg, index) => {
@@ -18,6 +26,7 @@ const ChatWindow = ({ messages }) => {
                     </div>
                 );
             })}
+            <div ref={endOfMessagesRef} />
         </div>
     );
 };
