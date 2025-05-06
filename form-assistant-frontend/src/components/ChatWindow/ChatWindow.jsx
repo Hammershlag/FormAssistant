@@ -1,8 +1,9 @@
 import React from "react";
+import "./ChatWindow.css"
 
 const ChatWindow = ({ messages }) => {
     return (
-        <div>
+        <div className="chat-window">
             {messages.map((msg, index) => {
                 const isUser = msg.sender === "user";
                 const userClasses = "user";
