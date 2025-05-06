@@ -1,20 +1,43 @@
-.assistant-container {
-    display: flex;
-    flex-direction: row;
+/* Full-page wrapper */
+.assistant-page {
     height: 100vh;
-    padding: 16px;
-    box-sizing: border-box;
-    gap: 0;
+    display: flex;
+    flex-direction: column;
     background-color: #f0f2f5;
 }
 
+/* Fixed top header */
+.assistant-header {
+    padding: 16px;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #d1d5db;
+}
+
+.assistant-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+/* Main content area */
+.assistant-container {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    overflow: hidden; /* prevent page scroll */
+}
+
+/* Chat section (left) */
 .chat-section {
     display: flex;
     flex-direction: column;
     flex: 2;
     max-width: 50%;
+    overflow-y: auto;
 }
 
+/* Form section (right) */
 .form-section {
     flex: 1;
     overflow-y: auto;
