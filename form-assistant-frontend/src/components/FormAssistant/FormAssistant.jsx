@@ -19,7 +19,6 @@ const FormAssistant = () => {
         const loadInitialForm = async () => {
             try {
                 const data = await fetchInitialForm();
-                console.log(data);
                 setFormData(data);
             } catch (error) {
                 console.error("Error loading initial form:", error);
