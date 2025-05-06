@@ -65,17 +65,21 @@ public class SupportFormLLMService implements FormLLMService<SupportForm> {
         }
 
         List<Message> previousMessages = messageHistoryStorage.getMessages(formId);
-
-
-        LLMResponse<SupportForm> response = llmService.generateFormContent(form, previousMessages, userInput, config);
-        response.getUpdatedForm().isDataValid();
-        response.getUpdatedForm().normalizeData();
-        formStorage.updateForm(formId, response.getUpdatedForm().toJson());
+        System.out.println("Previous messages: " + previousMessages);
         messageHistoryStorage.saveMessage(formId, MessageSender.USER, userInput);
-        messageHistoryStorage.saveMessage(formId, MessageSender.MODEL, response.getMessage());
-        response.setFormId(formId);
 
-        return response;
+        try {
+            LLMResponse<SupportForm> response = llmService.generateFormContent(form, previousMessages, userInput, config);
+            response.getUpdatedForm().isDataValid();
+            response.getUpdatedForm().normalizeData();
+            formStorage.updateForm(formId, response.getUpdatedForm().toJson());
+            messageHistoryStorage.saveMessage(formId, MessageSender.MODEL, response.getMessage());
+            response.setFormId(formId);
+            return response;
+        } catch (Exception e) {
+            messageHistoryStorage.saveMessage(formId, MessageSender.MODEL, "Error: " + e.getMessage());
+            throw e;
+        }
     }
 
     /**

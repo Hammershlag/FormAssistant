@@ -2,6 +2,7 @@ package com.hammershlag.formassistantbackend.storage.message;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,7 +47,7 @@ public class InMemoryMessageStorage implements MessageHistoryStorage {
      */
     @Override
     public List<Message> getMessages(String conversationId) {
-        return messageStore.getOrDefault(conversationId, List.of());
+        return new ArrayList<>(messageStore.getOrDefault(conversationId, List.of()));
     }
 
     /**
