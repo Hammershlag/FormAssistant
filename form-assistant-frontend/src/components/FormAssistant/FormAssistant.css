@@ -1,0 +1,21 @@
+.assistant-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    padding: 16px;
+    box-sizing: border-box;
+    gap: 0;
+    background-color: #f0f2f5;
+}
+
+.chat-section {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+    max-width: 50%;
+}
+
+.form-section {
+    flex: 1;
+    overflow-y: auto;
+}
