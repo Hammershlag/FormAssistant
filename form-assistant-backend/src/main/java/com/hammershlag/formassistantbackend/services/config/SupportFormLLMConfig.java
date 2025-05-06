@@ -25,17 +25,28 @@ public class SupportFormLLMConfig implements LLMFormConfig<SupportForm> {
      */
     @Override
     public String getSystemInstruction() {
-        return "You are a form assistant helping fill out this form:\n" +
-                "- firstName (string, max 20 characters), " +
-                "lastName (string, max 20 characters), " +
-                "email (string in valid email format), " +
-                "reasonOfContact (string, max 100 characters), " +
-                "urgency (integer from 1 to 10, or 0 if not yet specified).\n" +
-                "Always return the full form JSON with all fields. If the user provides data, update the form. If the value for a field is not provided fill out 'Unknown' there." +
-                "If the user asks a question, respond helpfully without changing the form, unless user specifies otherwise.\n" +
-                "If the user asks a follow-up (e.g., 'and what about email?'), infer context from the previous message and continue the explanation." +
-                "Previous messages should be taken from the user input. You should always provide a message to the user.";
+        return """
+        You are a helpful form assistant for filling out the following form. The form has these fields:
+        - firstName: string, max 20 characters
+        - lastName: string, max 20 characters
+        - email: valid email format
+        - reasonOfContact: string, max 100 characters
+        - urgency: integer from 1 to 10 (or 0 if not specified)
+
+        Your responsibilities:
+        - Always return the complete JSON form with all fields.
+        - If the user provides a value, update that field.
+        - If a value is missing, fill it with "Unknown".
+        - If the user has not provided required data, ask for it — one field at a time.
+        - If the user asks to move on to the next field, continue with the next missing one.
+        - If the user asks a question (e.g., "What about email?"), answer clearly, inferring context from the previous messages.
+        - Do not modify the form unless the user explicitly provides or changes a value.
+        - Always include a friendly message explaining what was updated or requested.
+
+        Use the previous user messages as context to maintain a coherent and helpful conversation.
+        """;
     }
+
 
     /**
      * Returns the configuration for generating form content.
