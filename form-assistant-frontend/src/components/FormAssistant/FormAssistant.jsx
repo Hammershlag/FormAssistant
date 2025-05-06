@@ -53,7 +53,7 @@ const FormAssistant = () => {
 
     return (
         <>
-            <div className="assistant-container">
+            <div className="assistant-container" data-testid="form-assistant">
                 <div className="chat-section">
                     <ChatWindow messages={messages} />
                     <MessageInput onSend={handleSend} />
