@@ -34,11 +34,11 @@ public class GeminiLLMService implements LLMService {
     @Value("${gemini.api.key}")
     private String apiKey;
 
+    @Value("${gemini.api.url}")
+    private String GEMINI_URL;
+
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-
-    private static final String GEMINI_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
 
     public GeminiLLMService(RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
