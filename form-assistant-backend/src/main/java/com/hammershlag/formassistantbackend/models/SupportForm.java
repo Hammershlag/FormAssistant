@@ -35,9 +35,6 @@ public class SupportForm implements FormData{
             Pattern.compile("^\\p{L}{1,20}$");
 
     private static final int MAX_REASON_LENGTH = 100;
-    private static final Pattern REASON_PATTERN =
-            Pattern.compile("^[\\p{L}\\p{N}\\s.,!?()'\"-]{1,100}$");
-
 
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
@@ -58,7 +55,7 @@ public class SupportForm implements FormData{
             throw new InvalidDataException("Last name is invalid: must  be at most " + MAX_NAME_LENGTH + " characters and contain only letters.");
         }
         if (email == null || (!email.equals("null") && !email.equals("Unknown") && !EMAIL_PATTERN.matcher(email).matches())) {
-            throw new InvalidDataException("Email is invalid: must  match the email pattern.");
+            throw new InvalidDataException("Email is invalid: must match the email pattern.");
         }
         if (reasonOfContact == null || reasonOfContact.length() > MAX_REASON_LENGTH) {
             throw new InvalidDataException("Reason of contact is invalid: must  be at most " + MAX_REASON_LENGTH + " characters.");
