@@ -2,6 +2,7 @@ package com.hammershlag.formassistantbackend.storage.message;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class InMemoryMessageStorage implements MessageHistoryStorage {
 
-    private final Map<String, List<String>> messageStore = new ConcurrentHashMap<>();
+    private final Map<String, List<Message>> messageStore = new ConcurrentHashMap<>();
 
     /**
      * Deletes all messages from the storage.
@@ -33,8 +34,8 @@ public class InMemoryMessageStorage implements MessageHistoryStorage {
      * @return the conversation ID
      */
     @Override
-    public String saveMessage(String conversationId, String message) {
-        messageStore.computeIfAbsent(conversationId, k -> new java.util.ArrayList<>()).add(message);
+    public String saveMessage(String conversationId, MessageSender sender, String message) {
+        messageStore.computeIfAbsent(conversationId, k -> new java.util.ArrayList<>()).add(new Message(sender, message));
         return conversationId;
     }
 
@@ -45,8 +46,8 @@ public class InMemoryMessageStorage implements MessageHistoryStorage {
      * @return a list of messages for the conversation
      */
     @Override
-    public List<String> getMessages(String conversationId) {
-        return messageStore.getOrDefault(conversationId, List.of());
+    public List<Message> getMessages(String conversationId) {
+        return new ArrayList<>(messageStore.getOrDefault(conversationId, List.of()));
     }
 
     /**

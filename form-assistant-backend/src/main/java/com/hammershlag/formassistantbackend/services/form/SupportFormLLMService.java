@@ -5,7 +5,9 @@ import com.hammershlag.formassistantbackend.models.SupportForm;
 import com.hammershlag.formassistantbackend.services.provider.LLMService;
 import com.hammershlag.formassistantbackend.services.config.LLMFormConfig;
 import com.hammershlag.formassistantbackend.storage.form.FormStorage;
+import com.hammershlag.formassistantbackend.storage.message.Message;
 import com.hammershlag.formassistantbackend.storage.message.MessageHistoryStorage;
+import com.hammershlag.formassistantbackend.storage.message.MessageSender;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
@@ -62,17 +64,21 @@ public class SupportFormLLMService implements FormLLMService<SupportForm> {
             form = SupportForm.fromJson(formStr);
         }
 
-        List<String> previousMessages = messageHistoryStorage.getMessages(formId);
+        List<Message> previousMessages = messageHistoryStorage.getMessages(formId);
+        messageHistoryStorage.saveMessage(formId, MessageSender.USER, userInput);
 
-
-        LLMResponse<SupportForm> response = llmService.generateFormContent(form, previousMessages, userInput, config);
-        response.getUpdatedForm().isDataValid();
-        response.getUpdatedForm().normalizeData();
-        formStorage.updateForm(formId, response.getUpdatedForm().toJson());
-        messageHistoryStorage.saveMessage(formId, userInput);
-        response.setFormId(formId);
-
-        return response;
+        try {
+            LLMResponse<SupportForm> response = llmService.generateFormContent(form, previousMessages, userInput, config);
+            response.getUpdatedForm().isDataValid();
+            response.getUpdatedForm().normalizeData();
+            formStorage.updateForm(formId, response.getUpdatedForm().toJson());
+            messageHistoryStorage.saveMessage(formId, MessageSender.MODEL, response.getMessage());
+            response.setFormId(formId);
+            return response;
+        } catch (Exception e) {
+            messageHistoryStorage.saveMessage(formId, MessageSender.MODEL, "Error: " + e.getMessage());
+            throw e;
+        }
     }
 
     /**

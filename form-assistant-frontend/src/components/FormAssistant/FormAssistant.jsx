@@ -51,8 +51,11 @@ const FormAssistant = () => {
 
 
     return (
-        <>
-            <div className="assistant-container" data-testid="form-assistant">
+        <div className="assistant-page">
+            <header className="assistant-header">
+                <h1 className="assistant-title">Form Assistant</h1>
+            </header>
+            <main className="assistant-container" data-testid="form-assistant">
                 <div className="chat-section">
                     <ChatWindow messages={messages} />
                     <MessageInput onSend={handleSend} />
@@ -60,9 +63,11 @@ const FormAssistant = () => {
                 <div className="form-section">
                     <FormDisplay formData={formData} />
                 </div>
-            </div>
-        </>
+            </main>
+        </div>
     );
+
+
 };
 
 export default FormAssistant;

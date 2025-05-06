@@ -31,7 +31,11 @@ public class SupportForm implements FormData{
     private Short urgency;
 
     private static final int MAX_NAME_LENGTH = 20;
+    private static final Pattern NAME_PATTERN =
+            Pattern.compile("^\\p{L}{1,20}$");
+
     private static final int MAX_REASON_LENGTH = 100;
+
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
 
@@ -44,14 +48,14 @@ public class SupportForm implements FormData{
     @JsonIgnore
     @Override
     public boolean isDataValid() {
-        if (firstName == null || firstName.length() > MAX_NAME_LENGTH) {
-            throw new InvalidDataException("First name is invalid: must be at most " + MAX_NAME_LENGTH + " characters.");
+        if (firstName == null || firstName.length() > MAX_NAME_LENGTH || !NAME_PATTERN.matcher(firstName).matches()) {
+            throw new InvalidDataException("First name is invalid: must be at most " + MAX_NAME_LENGTH + " characters and contain only letters.");
         }
-        if (lastName == null || lastName.length() > MAX_NAME_LENGTH) {
-            throw new InvalidDataException("Last name is invalid: must  be at most " + MAX_NAME_LENGTH + " characters.");
+        if (lastName == null || lastName.length() > MAX_NAME_LENGTH || !NAME_PATTERN.matcher(lastName).matches()) {
+            throw new InvalidDataException("Last name is invalid: must  be at most " + MAX_NAME_LENGTH + " characters and contain only letters.");
         }
         if (email == null || (!email.equals("null") && !email.equals("Unknown") && !EMAIL_PATTERN.matcher(email).matches())) {
-            throw new InvalidDataException("Email is invalid: must  match the email pattern.");
+            throw new InvalidDataException("Email is invalid: must match the email pattern.");
         }
         if (reasonOfContact == null || reasonOfContact.length() > MAX_REASON_LENGTH) {
             throw new InvalidDataException("Reason of contact is invalid: must  be at most " + MAX_REASON_LENGTH + " characters.");
