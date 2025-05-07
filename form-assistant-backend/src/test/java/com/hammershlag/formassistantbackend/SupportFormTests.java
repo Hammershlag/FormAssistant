@@ -30,7 +30,7 @@ public class SupportFormTests {
         InvalidDataException exception = assertThrows(InvalidDataException.class, form::isDataValid);
 
         // Optionally, check the exception message to ensure it is as expected
-        assertEquals("First name is invalid: must be at most 20 characters.", exception.getMessage());
+        assertEquals("First name is invalid: must be at most 20 characters and contain only letters.", exception.getMessage());
     }
 
 
@@ -40,7 +40,7 @@ public class SupportFormTests {
 
         // Expecting InvalidDataException to be thrown for null last name
         InvalidDataException exception = assertThrows(InvalidDataException.class, form::isDataValid);
-        assertEquals("Last name is invalid: must  be at most 20 characters.", exception.getMessage());
+        assertEquals("Last name is invalid: must be at most 20 characters and contain only letters.", exception.getMessage());
     }
 
     @Test
@@ -49,7 +49,7 @@ public class SupportFormTests {
 
         // Expecting InvalidDataException to be thrown for invalid email format
         InvalidDataException exception = assertThrows(InvalidDataException.class, form::isDataValid);
-        assertEquals("Email is invalid: must  match the email pattern.", exception.getMessage());
+        assertEquals("Email is invalid: must match the email pattern.", exception.getMessage());
     }
 
     @Test
@@ -113,7 +113,7 @@ public class SupportFormTests {
     @Test
     void testFromJsonWithInvalidJsonThrows() {
         String json = "{ invalid json }";
-        assertThrows(IllegalArgumentException.class, () -> SupportForm.fromJson(json));
+        assertThrows(InvalidDataException.class, () -> SupportForm.fromJson(json));
     }
 
     @Test

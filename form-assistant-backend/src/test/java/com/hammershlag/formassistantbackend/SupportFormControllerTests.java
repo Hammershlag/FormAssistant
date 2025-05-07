@@ -2,145 +2,119 @@ package com.hammershlag.formassistantbackend;
 
 import com.hammershlag.formassistantbackend.controllers.SupportFormController;
 import com.hammershlag.formassistantbackend.dto.LLMResponse;
-import com.hammershlag.formassistantbackend.exceptions.exceptionTypes.InvalidDataException;
 import com.hammershlag.formassistantbackend.models.SupportForm;
 import com.hammershlag.formassistantbackend.services.form.SupportFormLLMService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 /**
  * @author Tomasz Zbroszczyk
  * @version 1.0
  * @since 05.05.2025
  */
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class SupportFormControllerTests {
-
-    @Mock
+    private SupportFormController controller;
     private SupportFormLLMService llmService;
-
-    @InjectMocks
-    private SupportFormController supportFormController;
 
     @BeforeEach
     void setUp() {
-        // Setup done by @InjectMocks
+        llmService = mock(SupportFormLLMService.class);
+        controller = new SupportFormController(llmService);
     }
 
     @Test
     void testGetInitialForm() {
-        SupportForm initialForm = new SupportForm(null, null, null, null, null);
-        when(llmService.getInitialForm()).thenReturn(initialForm);
+        SupportForm mockForm = new SupportForm();
+        when(llmService.getInitialForm()).thenReturn(mockForm);
 
-        ResponseEntity<SupportForm> response = supportFormController.getInitialForm();
+        ResponseEntity<SupportForm> response = controller.getInitialForm();
+
+        assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
-        assertNull(response.getBody().getFirstName());
-        assertNull(response.getBody().getLastName());
-        assertNull(response.getBody().getEmail());
-        assertNull(response.getBody().getReasonOfContact());
-        assertNull(response.getBody().getUrgency());
+        assertEquals(mockForm, response.getBody());
+        verify(llmService, times(1)).getInitialForm();
     }
 
     @Test
-    void testUpdateFormWithFormId() throws Exception {
-        String formId = "12345";
-        String userInput = "My name is John Doe and I need help!";
-        SupportForm updatedForm = new SupportForm("null", "null", "null", "null", (short) 0);
-        LLMResponse<SupportForm> llmResponse = new LLMResponse<>("I could not identify any fields from your input.", updatedForm);
+    void testUpdateForm_WithValidInput() throws Exception {
+        String userInput = "Set first name to John and last name to Doe";
+        SupportForm updatedForm = new SupportForm("John", "Doe", null, null, null);
+        LLMResponse<SupportForm> mockResponse = new LLMResponse<>("Form updated successfully", updatedForm, "12345");
 
-        when(llmService.updateForm(formId, userInput)).thenReturn(llmResponse);
+        when(llmService.updateForm("", userInput)).thenReturn(mockResponse);
 
-        ResponseEntity<LLMResponse<SupportForm>> response = supportFormController.updateForm(formId, userInput);
+        ResponseEntity<LLMResponse<SupportForm>> response = controller.updateForm(null, userInput);
+
+        assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("I could not identify any fields from your input.", response.getBody().getMessage());
-        assertEquals("null", response.getBody().getUpdatedForm().getFirstName());
+        assertEquals(updatedForm, response.getBody().getUpdatedForm());
+        verify(llmService, times(1)).updateForm("", userInput);
     }
 
     @Test
-    void testUpdateFormWithoutFormId() throws Exception {
-        String userInput = "My name is Jane Doe and I need assistance!";
-        SupportForm updatedForm = new SupportForm("Jane", "Doe", "jane.doe@example.com", "Assistance", (short) 3);
-        LLMResponse<SupportForm> llmResponse = new LLMResponse<>("First name updated", updatedForm);
+    void testUpdateForm_WithFormId() throws Exception {
+        String formId = "12345";
+        String userInput = "Set urgency to 5";
+        SupportForm updatedForm = new SupportForm("John", "Doe", "john.doe@example.com", "Need help", (short) 5);
+        LLMResponse<SupportForm> mockResponse = new LLMResponse<>("Urgency updated successfully", updatedForm, formId);
 
-        when(llmService.updateForm("", userInput)).thenReturn(llmResponse);
+        when(llmService.updateForm(formId, userInput)).thenReturn(mockResponse);
 
-        ResponseEntity<LLMResponse<SupportForm>> response = supportFormController.updateForm(null, userInput);
+        ResponseEntity<LLMResponse<SupportForm>> response = controller.updateForm(formId, userInput);
+
+        assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Jane", response.getBody().getUpdatedForm().getFirstName());
-        assertEquals("Doe", response.getBody().getUpdatedForm().getLastName());
+        assertEquals(updatedForm, response.getBody().getUpdatedForm());
+        verify(llmService, times(1)).updateForm(formId, userInput);
     }
 
     @Test
-    void testUpdateFormWithTooLongFirstName() {
-        String formId = "12345";
-        String userInput = "My name is " + "J".repeat(25);
+    void testUpdateForm_InvalidInput() throws Exception {
+        String userInput = "Set urgency to 15"; // Invalid urgency
 
-        when(llmService.updateForm(formId, userInput))
-                .thenThrow(new InvalidDataException("First name is invalid: must be at most 20 characters."));
+        when(llmService.updateForm("", userInput)).thenThrow(new RuntimeException("Urgency is invalid: must be between 1 and 10."));
 
-        InvalidDataException ex = assertThrows(
-                InvalidDataException.class,
-                () -> supportFormController.updateForm(formId, userInput)
-        );
+        Exception exception = assertThrows(RuntimeException.class, () -> controller.updateForm(null, userInput));
+        assertEquals("Urgency is invalid: must be between 1 and 10.", exception.getMessage());
 
-        assertEquals("First name is invalid: must be at most 20 characters.", ex.getMessage());
+        verify(llmService, times(1)).updateForm("", userInput);
     }
 
     @Test
-    void testUpdateFormWithInvalidEmail() {
-        String formId = "12345";
-        String userInput = "My email is notAnEmail.com";
+    void testUpdateForm_TwoMessages_UpdateTwoFields() throws Exception {
+        String firstMessage = "Set first name to John";
+        String secondMessage = "Set last name to Doe";
 
-        when(llmService.updateForm(formId, userInput))
-                .thenThrow(new InvalidDataException("Email is invalid: must match the email pattern."));
+        SupportForm intermediateForm = new SupportForm("John", null, null, null, null);
+        SupportForm finalForm = new SupportForm("John", "Doe", null, null, null);
 
-        InvalidDataException ex = assertThrows(
-                InvalidDataException.class,
-                () -> supportFormController.updateForm(formId, userInput)
-        );
+        LLMResponse<SupportForm> firstResponse = new LLMResponse<>("First name updated", intermediateForm, "12345");
+        LLMResponse<SupportForm> secondResponse = new LLMResponse<>("Last name updated", finalForm, "12345");
 
-        assertEquals("Email is invalid: must match the email pattern.", ex.getMessage());
-    }
+        when(llmService.updateForm("", firstMessage)).thenReturn(firstResponse);
+        when(llmService.updateForm("12345", secondMessage)).thenReturn(secondResponse);
 
-    @Test
-    void testUpdateFormWithTooLongReason() {
-        String formId = "12345";
-        String userInput = "The reason why i contact you is " + "R".repeat(111);
+        // First update
+        ResponseEntity<LLMResponse<SupportForm>> firstResponseEntity = controller.updateForm(null, firstMessage);
+        assertNotNull(firstResponseEntity);
+        assertEquals(200, firstResponseEntity.getStatusCodeValue());
+        assertEquals(intermediateForm, firstResponseEntity.getBody().getUpdatedForm());
 
-        when(llmService.updateForm(formId, userInput))
-                .thenThrow(new InvalidDataException("Reason of contact is invalid: must be at most 100 characters."));
+        // Second update
+        ResponseEntity<LLMResponse<SupportForm>> secondResponseEntity = controller.updateForm("12345", secondMessage);
+        assertNotNull(secondResponseEntity);
+        assertEquals(200, secondResponseEntity.getStatusCodeValue());
+        assertEquals(finalForm, secondResponseEntity.getBody().getUpdatedForm());
 
-        InvalidDataException ex = assertThrows(
-                InvalidDataException.class,
-                () -> supportFormController.updateForm(formId, userInput)
-        );
-
-        assertEquals("Reason of contact is invalid: must be at most 100 characters.", ex.getMessage());
-    }
-
-    @Test
-    void testUpdateFormWithInvalidUrgency() {
-        String formId = "12345";
-        String userInput = "My urgency is 15";
-
-        when(llmService.updateForm(formId, userInput))
-                .thenThrow(new InvalidDataException("Urgency is invalid: must be between 1 and 10."));
-
-        InvalidDataException ex = assertThrows(
-                InvalidDataException.class,
-                () -> supportFormController.updateForm(formId, userInput)
-        );
-
-        assertEquals("Urgency is invalid: must be between 1 and 10.", ex.getMessage());
+        verify(llmService, times(1)).updateForm("", firstMessage);
+        verify(llmService, times(1)).updateForm("12345", secondMessage);
     }
 }
