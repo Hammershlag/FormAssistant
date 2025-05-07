@@ -1,5 +1,7 @@
 package com.hammershlag.formassistantbackend.storage.message;
 
+import lombok.Getter;
+
 /**
  * Enum representing the sender of a message in the system.
  *
@@ -7,23 +9,21 @@ package com.hammershlag.formassistantbackend.storage.message;
  * @version 1.1
  * @since 06.05.2025
  */
+@Getter
 public enum MessageSender {
     USER("user"),
     MODEL("model");
 
+    /**
+     * -- GETTER --
+     *  Returns the sender identifier as a String.
+     *
+     * @return the sender name
+     */
     private final String sender;
 
     MessageSender(String sender) {
         this.sender = sender;
-    }
-
-    /**
-     * Returns the sender identifier as a String.
-     *
-     * @return the sender name
-     */
-    public String getSender() {
-        return sender;
     }
 
     /**

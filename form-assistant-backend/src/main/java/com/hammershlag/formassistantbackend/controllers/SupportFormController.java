@@ -29,7 +29,7 @@ public class SupportFormController {
 
     @SneakyThrows
     @PutMapping({"/{formId}", ""})
-    public ResponseEntity<LLMResponse<SupportForm>> updateForm(@PathVariable(required = false) String formId, @RequestBody String userInput) {
+    public ResponseEntity<LLMResponse<SupportForm>> updateForm(@PathVariable(name = "formId", required = false) String formId, @RequestBody String userInput) {
         if (formId == null)
             formId = "";
 

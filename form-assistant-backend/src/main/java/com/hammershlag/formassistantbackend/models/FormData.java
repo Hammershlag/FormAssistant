@@ -1,5 +1,7 @@
 package com.hammershlag.formassistantbackend.models;
 
+import java.io.Serializable;
+
 /**
  * Interface representing a form data structure.
  * This interface provides methods to validate the data and convert it to a JSON string.
@@ -8,7 +10,7 @@ package com.hammershlag.formassistantbackend.models;
  * @version 1.0
  * @since 05.05.2025
  */
-public interface FormData {
+public interface FormData extends Serializable {
 
     /**
      * Checks whether the data inside this form instance is valid (e.g. email format, field lengths).

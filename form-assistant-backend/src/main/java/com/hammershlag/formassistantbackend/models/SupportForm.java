@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -22,22 +23,23 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class SupportForm implements FormData{
+public class SupportForm implements FormData {
+
+    private static final Pattern NAME_PATTERN = Pattern.compile("^\\p{L}{1,20}$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+    private static final int MAX_NAME_LENGTH = 20;
+    private static final int MAX_REASON_LENGTH = 100;
+    public static final String NAME_REGEX = "^\\p{L}{1,20}$";
 
     private String firstName;
+
     private String lastName;
+
     private String email;
+
     private String reasonOfContact;
+
     private Short urgency;
-
-    private static final int MAX_NAME_LENGTH = 20;
-    private static final Pattern NAME_PATTERN =
-            Pattern.compile("^\\p{L}{1,20}$");
-
-    private static final int MAX_REASON_LENGTH = 100;
-
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
 
     /**
      * Validates the current form data.
@@ -48,19 +50,19 @@ public class SupportForm implements FormData{
     @JsonIgnore
     @Override
     public boolean isDataValid() {
-        if (firstName == null || firstName.length() > MAX_NAME_LENGTH || !NAME_PATTERN.matcher(firstName).matches()) {
+        if (Objects.isNull(firstName) || firstName.length() > MAX_NAME_LENGTH || !NAME_PATTERN.matcher(firstName).matches()) {
             throw new InvalidDataException("First name is invalid: must be at most " + MAX_NAME_LENGTH + " characters and contain only letters.");
         }
-        if (lastName == null || lastName.length() > MAX_NAME_LENGTH || !NAME_PATTERN.matcher(lastName).matches()) {
-            throw new InvalidDataException("Last name is invalid: must  be at most " + MAX_NAME_LENGTH + " characters and contain only letters.");
+        if (Objects.isNull(lastName) || lastName.length() > MAX_NAME_LENGTH || !NAME_PATTERN.matcher(lastName).matches()) {
+            throw new InvalidDataException("Last name is invalid: must be at most " + MAX_NAME_LENGTH + " characters and contain only letters.");
         }
-        if (email == null || (!email.equals("null") && !email.equals("Unknown") && !EMAIL_PATTERN.matcher(email).matches())) {
+        if (Objects.isNull(email) || (!email.equals("null") && !email.equals("Unknown") && !EMAIL_PATTERN.matcher(email).matches())) {
             throw new InvalidDataException("Email is invalid: must match the email pattern.");
         }
-        if (reasonOfContact == null || reasonOfContact.length() > MAX_REASON_LENGTH) {
+        if (Objects.isNull(reasonOfContact)  || reasonOfContact.length() > MAX_REASON_LENGTH) {
             throw new InvalidDataException("Reason of contact is invalid: must  be at most " + MAX_REASON_LENGTH + " characters.");
         }
-        if (urgency == null || urgency < 0 || urgency > 10) {
+        if (Objects.isNull(urgency) || urgency < 0 || urgency > 10) {
             throw new InvalidDataException("Urgency is invalid: must be between 1 and 10.");
         }
         return true;
