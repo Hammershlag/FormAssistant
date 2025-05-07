@@ -5,6 +5,7 @@ import com.hammershlag.formassistantbackend.storage.message.Message;
 import com.hammershlag.formassistantbackend.storage.message.MessageSender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
  * @version 1.0
  * @since 07.05.2025
  */
+@SpringBootTest
 public class InMemoryMessageStorageTests {
 
     private InMemoryMessageStorage messageStorage;

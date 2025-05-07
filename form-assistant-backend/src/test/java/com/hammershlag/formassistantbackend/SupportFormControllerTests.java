@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 05.05.2025
  */
 @ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class SupportFormControllerTests {
 
     @Mock

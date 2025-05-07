@@ -3,6 +3,7 @@ package com.hammershlag.formassistantbackend;
 import com.hammershlag.formassistantbackend.exceptions.exceptionTypes.InvalidDataException;
 import com.hammershlag.formassistantbackend.models.SupportForm;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version 1.0
  * @since 05.05.2025
  */
+@SpringBootTest
 public class SupportFormTests {
 
     @Test
