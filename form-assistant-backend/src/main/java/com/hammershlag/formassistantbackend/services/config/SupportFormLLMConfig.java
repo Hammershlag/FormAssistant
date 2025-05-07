@@ -3,7 +3,6 @@ package com.hammershlag.formassistantbackend.services.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hammershlag.formassistantbackend.models.SupportForm;
 import com.hammershlag.formassistantbackend.storage.message.Message;
-import lombok.SneakyThrows;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 

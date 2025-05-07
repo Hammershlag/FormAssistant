@@ -6,7 +6,6 @@ import com.hammershlag.formassistantbackend.storage.message.Message;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Configuration interface for generating content with a large language model (LLM) for a specific form.
