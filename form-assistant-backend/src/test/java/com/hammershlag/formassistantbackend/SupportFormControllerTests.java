@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 05.05.2025
  */
 @ExtendWith(MockitoExtension.class)
-class SupportFormControllerTests {
+public class SupportFormControllerTests {
 
     @Mock
     private SupportFormLLMService llmService;

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 05.05.2025
  */
 @SpringBootTest
-class InMemoryFormStorageTests {
+public class InMemoryFormStorageTests {
 
     private InMemoryFormStorage inMemoryFormStorage;
 
