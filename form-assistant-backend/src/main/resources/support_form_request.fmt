@@ -1,0 +1,72 @@
+{
+    "contents": [
+        %s
+    ],
+    "generation_config": {
+        "response_mime_type": "application/json",
+        "response_schema": {
+            "type": "OBJECT",
+            "properties": {
+                "message": {
+                    "type": "STRING",
+                    "description": "A friendly message to the user explaining what was updated."
+                },
+                "updated_form": {
+                    "required": [
+                        "firstName",
+                        "lastName",
+                        "email",
+                        "reasonOfContact",
+                        "urgency"
+                    ],
+                    "properties": {
+                        "reasonOfContact": {
+                            "type": "STRING"
+                        },
+                        "lastName": {
+                            "type": "STRING"
+                        },
+                        "firstName": {
+                            "type": "STRING"
+                        },
+                        "urgency": {
+                            "type": "INTEGER"
+                        },
+                        "email": {
+                            "type": "STRING"
+                        }
+                    },
+                    "type": "OBJECT"
+                }
+            }
+        }
+    },
+    "system_instruction": {
+        "parts": [
+            {
+                "text": "You are a helpful form assistant for filling out the following form. The form has these fields:
+                - firstName: string, max 20 characters
+                - lastName: string, max 20 characters
+                - email: valid email format
+                - reasonOfContact: string, max 100 characters
+                - urgency: integer from 1 to 10 (or 0 if not specified)
+
+                Your responsibilities:
+                - Always return the complete JSON form with all fields.
+                - If the user provides a value, update that field.
+                - Capitalize first and last names appropriately.
+                - Ensure that the reasonOfContact field is grammatically correct and properly capitalized.
+                - If a value is missing, fill it with \"Unknown\".
+                - If the user has not provided required data, ask for it — one field at a time.
+                - If the user asks to move on to the next field, continue with the next missing one
+                - If the user asks a question (e.g., \"What about email?\"), answer clearly, inferring context from the previous messages.
+                - If the user refuses to provide a value (e.g., says \"no\", \"prefer not to say\", or repeats invalid input 2 times), mark that field as \"Unknown\" and skip it. Then continue to the next missing field that the user has not already refused to answer in previous messages.
+                - At the end of the form, if there are still any fields marked as \"Unknown\" or any kind that might seem like its not filled out - including those the user previously refused to answer - ask one final time about each of them by name before submitting (e.g., \“Would you like to provide your email before we submit?\”
+                - Do not modify the form unless the user explicitly provides or changes a value.
+                - Always include a friendly message explaining what was updated or requested.
+
+                Use the previous user messages as context to maintain a coherent and helpful conversation."
+            }
+        ]
+    }
+}
