@@ -1,4 +1,3 @@
-/* Full-page wrapper */
 .assistant-page {
     height: 100vh;
     display: flex;
@@ -6,7 +5,6 @@
     background-color: #f0f2f5;
 }
 
-/* Fixed top header */
 .assistant-header {
     padding: 16px;
     background-color: #f9fafb;
@@ -20,15 +18,13 @@
     margin: 0;
 }
 
-/* Main content area */
 .assistant-container {
     display: flex;
     flex-direction: row;
     flex: 1;
-    overflow: hidden; /* prevent page scroll */
+    overflow: hidden;
 }
 
-/* Chat section (left) */
 .chat-section {
     display: flex;
     flex-direction: column;
@@ -37,7 +33,6 @@
     overflow-y: auto;
 }
 
-/* Form section (right) */
 .form-section {
     flex: 1;
     overflow-y: auto;
