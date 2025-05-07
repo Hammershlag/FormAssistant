@@ -9,6 +9,7 @@ import com.hammershlag.formassistantbackend.services.config.LLMFormConfig;
 import com.hammershlag.formassistantbackend.storage.message.Message;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,9 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Service for interacting with the Gemini API to generate form content based on user input and form data.
@@ -65,41 +70,11 @@ public class GeminiLLMService implements LLMService {
     ) {
         String url = GEMINI_URL + apiKey;
 
-        Map<String, Object> systemInstruction = Map.of(
-                "parts", List.of(Map.of("text", config.getSystemInstruction()))
-        );
-
-        List<Map<String, Object>> contents = new ArrayList<>();
-
-        for (int i = 0; i < previousMessages.size(); i++) {
-            Message msg = previousMessages.get(i);
-
-
-            contents.add(Map.of(
-                    "role", msg.getSender(),
-                    "parts", List.of(Map.of("text", "Message " + i + ": " + msg.getMessage()))
-            ));
-        }
-
-
-        String currentMessage = "Here is the current form: " + form.toJson() +
-                ". My input: '" + userInput + "'";
-        contents.add(Map.of(
-                "role", "user",
-                "parts", List.of(Map.of("text", currentMessage))
-        ));
-
-
-
-        Map<String, Object> body = Map.of(
-                "system_instruction", systemInstruction,
-                "contents", List.of(contents),
-                "generation_config", config.getGenerationConfig()
-        );
+        String configRequest = config.getFormattedRequest(previousMessages, userInput, form, objectMapper);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+        HttpEntity<String> request = new HttpEntity<>(configRequest, headers);
 
         ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 
